@@ -15,22 +15,24 @@ import {
   CircularProgress,
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { initGun, getPosts, type Post } from '@/lib/db';
+import { initGun, getPosts, seedDemoPosts, type Post } from '@/lib/db';
 import { getIPFSUrl } from '@/lib/ipfs';
 
 export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Initialize Gun.js and subscribe to posts
     const init = async () => {
       await initGun();
       
-      // Subscribe to posts
+      // Seed demo posts for demonstration
+      await seedDemoPosts();
+      
+      // Subscribe to posts (Gun works reactively)
       getPosts((newPosts) => {
         setPosts(newPosts);
-        setLoading(false);
       });
     };
     
@@ -68,9 +70,27 @@ export default function FeedPage() {
       {posts.length === 0 ? (
         <Card>
           <CardContent>
-            <Typography variant="body1" color="text.secondary" align="center">
+            <Typography variant="body1" color="text.secondary" align="center" gutterBottom>
               No posts yet. Be the first to share something!
             </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+              <IconButton 
+                color="primary" 
+                onClick={async () => {
+                  await seedDemoPosts();
+                  window.location.reload();
+                }}
+                aria-label="Load demo posts"
+                sx={{ 
+                  border: '1px solid',
+                  borderColor: 'primary.main',
+                  borderRadius: 2,
+                  px: 2
+                }}
+              >
+                <Typography variant="button" sx={{ mr: 1 }}>Load Demo Posts</Typography>
+              </IconButton>
+            </Box>
           </CardContent>
         </Card>
       ) : (

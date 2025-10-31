@@ -19,15 +19,16 @@ export const initGun = async () => {
       await import('gun/sea'); // For encryption and authentication
     }
     
-    // Gun configuration with relay peers for synchronization
+    // Gun configuration - works fully locally without external peers
+    // This enables offline-first, local-only operation
     gunInstance = Gun({
-      peers: [
-        'https://gun-manhattan.herokuapp.com/gun',
-        'https://gun-us.herokuapp.com/gun',
-      ],
       localStorage: true,
       radisk: true,
+      // No external peers - fully local operation
+      peers: [],
     });
+    
+    console.log('Gun.js initialized in local-only mode');
   }
   return gunInstance;
 };
@@ -248,4 +249,75 @@ export const getFollowing = (callback: (following: string[]) => void) => {
     }
     callback([...following]);
   });
+};
+
+/**
+ * Seed demo posts for demonstration purposes
+ * This creates sample posts in the public feed to show how the app works
+ */
+export const seedDemoPosts = async (): Promise<void> => {
+  const gun = getGun();
+  if (!gun) {
+    console.log('Gun not initialized, skipping demo posts');
+    return;
+  }
+
+  // Check if demo posts already exist
+  const demoKey = 'demo_posts_seeded';
+  const alreadySeeded = localStorage.getItem(demoKey);
+  
+  if (alreadySeeded === 'true') {
+    console.log('Demo posts already seeded');
+    return;
+  }
+
+  // Give Gun a moment to be ready
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  const demoPosts: Post[] = [
+    {
+      id: 'demo-1',
+      author: 'Alice',
+      content: '🎉 Welcome to Decentralized Social! This is a local-first, peer-to-peer social network where you own your data. No central servers needed!',
+      timestamp: Date.now() - 3600000, // 1 hour ago
+      likes: 5,
+    },
+    {
+      id: 'demo-2',
+      author: 'Bob',
+      content: 'Just tried the new PWA features - works great offline! 📱 You can install this app on your device and it will work even without internet.',
+      timestamp: Date.now() - 7200000, // 2 hours ago
+      likes: 3,
+    },
+    {
+      id: 'demo-3',
+      author: 'Charlie',
+      content: 'Loving the decentralized approach! 🚀 All my data is stored locally in my browser and syncs peer-to-peer. No one can censor or control my posts.',
+      timestamp: Date.now() - 10800000, // 3 hours ago
+      likes: 8,
+    },
+    {
+      id: 'demo-4',
+      author: 'Diana',
+      content: 'The Material-UI design looks fantastic! 🎨 Great work on making decentralization beautiful and easy to use.',
+      timestamp: Date.now() - 14400000, // 4 hours ago
+      likes: 12,
+    },
+    {
+      id: 'demo-5',
+      author: 'Eve',
+      content: 'Just created my first post! This is so cool - knowing that I truly own my content and identity. 🔐',
+      timestamp: Date.now() - 18000000, // 5 hours ago
+      likes: 6,
+    },
+  ];
+
+  // Add demo posts to Gun
+  demoPosts.forEach((post) => {
+    gun.get('posts').get(post.id).put(post);
+  });
+
+  // Mark as seeded
+  localStorage.setItem(demoKey, 'true');
+  console.log('Demo posts seeded successfully!');
 };
