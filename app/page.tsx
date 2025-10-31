@@ -23,14 +23,18 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize Gun.js
-    initGun();
-
-    // Subscribe to posts
-    getPosts((newPosts) => {
-      setPosts(newPosts);
-      setLoading(false);
-    });
+    // Initialize Gun.js and subscribe to posts
+    const init = async () => {
+      await initGun();
+      
+      // Subscribe to posts
+      getPosts((newPosts) => {
+        setPosts(newPosts);
+        setLoading(false);
+      });
+    };
+    
+    init();
   }, []);
 
   const formatTimestamp = (timestamp: number) => {

@@ -78,6 +78,7 @@ export const logoutUser = () => {
 
 export const getCurrentUser = () => {
   const gun = getGun();
+  if (!gun) return null;
   return gun.user();
 };
 
@@ -120,6 +121,11 @@ export const createPost = async (post: Omit<Post, 'id' | 'timestamp' | 'likes'>)
 
 export const getPosts = (callback: (posts: Post[]) => void) => {
   const gun = getGun();
+  if (!gun) {
+    callback([]);
+    return;
+  }
+  
   const posts: Post[] = [];
 
   gun.get('posts').map().on((post: Post) => {

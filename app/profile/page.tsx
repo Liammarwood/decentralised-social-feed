@@ -28,24 +28,28 @@ export default function ProfilePage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Initialize Gun.js
-    initGun();
+    // Initialize Gun.js and check authentication
+    const init = async () => {
+      await initGun();
+      
+      // Check authentication
+      const user = getCurrentUser();
+      if (!user?.is) {
+        router.push('/auth');
+        return;
+      }
 
-    // Check authentication
-    const user = getCurrentUser();
-    if (!user?.is) {
-      router.push('/auth');
-      return;
-    }
+      setIsAuthenticated(true);
+      setUsername(user.is.alias || 'Anonymous');
 
-    setIsAuthenticated(true);
-    setUsername(user.is.alias || 'Anonymous');
-
-    // Subscribe to user's posts
-    getUserPosts((newPosts) => {
-      setPosts(newPosts);
-      setLoading(false);
-    });
+      // Subscribe to user's posts
+      getUserPosts((newPosts) => {
+        setPosts(newPosts);
+        setLoading(false);
+      });
+    };
+    
+    init();
   }, [router]);
 
   const formatTimestamp = (timestamp: number) => {

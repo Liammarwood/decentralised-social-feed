@@ -7,7 +7,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useRouter, usePathname } from 'next/navigation';
-import { getCurrentUser, logoutUser } from '@/lib/db';
+import { initGun, getCurrentUser, logoutUser } from '@/lib/db';
 
 export default function Navigation() {
   const router = useRouter();
@@ -16,15 +16,26 @@ export default function Navigation() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const user = getCurrentUser();
-      setIsAuthenticated(!!user?.is);
-    };
-    checkAuth();
+    let interval: NodeJS.Timeout;
     
-    // Check auth status periodically
-    const interval = setInterval(checkAuth, 1000);
-    return () => clearInterval(interval);
+    const init = async () => {
+      await initGun();
+      
+      const checkAuth = () => {
+        const user = getCurrentUser();
+        setIsAuthenticated(!!user?.is);
+      };
+      checkAuth();
+      
+      // Check auth status periodically
+      interval = setInterval(checkAuth, 1000);
+    };
+    
+    init();
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
