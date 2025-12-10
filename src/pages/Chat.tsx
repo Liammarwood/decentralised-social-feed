@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Identity } from '@/storage/indexeddb'
-import { getAllPeers, getAllMessages, type Peer } from '@/storage/indexeddb'
+import { getAllPeers, type Peer } from '@/storage/indexeddb'
 import type { ChatMessage } from '@/types'
 
 interface ChatProps {

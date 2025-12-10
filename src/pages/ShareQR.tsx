@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { Identity } from '@/storage/indexeddb'
-import { importKeyPair, uint8ToBase64 } from '@/crypto/keys'
+import { importKeyPair } from '@/crypto/keys'
 import { WebRTCPeer } from '@/p2p/webrtc'
 import { createHandshakeData, generateHandshakeQR, generateConnectionString } from '@/p2p/qr'
 

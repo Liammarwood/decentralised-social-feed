@@ -131,8 +131,8 @@ export async function deriveSharedSecret(
  */
 export async function deriveEncryptionKey(
   sharedSecret: ArrayBuffer,
-  salt: Uint8Array,
-  info: Uint8Array
+  salt: BufferSource,
+  info: BufferSource
 ): Promise<CryptoKey> {
   const baseKey = await crypto.subtle.importKey(
     'raw',
@@ -160,7 +160,7 @@ export async function deriveEncryptionKey(
  * Encrypt data with AES-GCM
  */
 export async function encrypt(
-  data: Uint8Array,
+  data: BufferSource,
   key: CryptoKey
 ): Promise<{ ciphertext: Uint8Array; iv: Uint8Array }> {
   const iv = crypto.getRandomValues(new Uint8Array(12))
@@ -180,9 +180,9 @@ export async function encrypt(
  * Decrypt data with AES-GCM
  */
 export async function decrypt(
-  ciphertext: Uint8Array,
+  ciphertext: BufferSource,
   key: CryptoKey,
-  iv: Uint8Array
+  iv: BufferSource
 ): Promise<Uint8Array> {
   const plaintext = await crypto.subtle.decrypt(
     { name: 'AES-GCM', iv },
@@ -196,7 +196,7 @@ export async function decrypt(
 /**
  * Sign data with Ed25519
  */
-export async function sign(data: Uint8Array, privateKey: CryptoKey): Promise<Uint8Array> {
+export async function sign(data: BufferSource, privateKey: CryptoKey): Promise<Uint8Array> {
   const signature = await crypto.subtle.sign({ name: 'Ed25519' }, privateKey, data)
   return new Uint8Array(signature)
 }
@@ -205,8 +205,8 @@ export async function sign(data: Uint8Array, privateKey: CryptoKey): Promise<Uin
  * Verify signature with Ed25519
  */
 export async function verify(
-  data: Uint8Array,
-  signature: Uint8Array,
+  data: BufferSource,
+  signature: BufferSource,
   publicKey: CryptoKey
 ): Promise<boolean> {
   return await crypto.subtle.verify({ name: 'Ed25519' }, publicKey, signature, data)
@@ -215,7 +215,7 @@ export async function verify(
 /**
  * Import public encryption key from raw bytes
  */
-export async function importPublicEncKey(publicKeyBytes: Uint8Array): Promise<CryptoKey> {
+export async function importPublicEncKey(publicKeyBytes: BufferSource): Promise<CryptoKey> {
   return await crypto.subtle.importKey(
     'raw',
     publicKeyBytes,
@@ -228,7 +228,7 @@ export async function importPublicEncKey(publicKeyBytes: Uint8Array): Promise<Cr
 /**
  * Import public signing key from raw bytes
  */
-export async function importPublicSignKey(publicKeyBytes: Uint8Array): Promise<CryptoKey> {
+export async function importPublicSignKey(publicKeyBytes: BufferSource): Promise<CryptoKey> {
   return await crypto.subtle.importKey(
     'raw',
     publicKeyBytes,

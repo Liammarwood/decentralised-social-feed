@@ -16,7 +16,7 @@
     "pako": "^2.1.0",
     "qrcode": "^1.5.3",
     "jsqr": "^1.4.0",
-    "automerge": "^2.1.10"
+    "automerge": "^0.14.2"
   },
   "devDependencies": {
     "@types/node": "^20.10.6",

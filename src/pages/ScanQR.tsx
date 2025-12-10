@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Identity } from '@/storage/indexeddb'
-import { importKeyPair, importPublicEncKey, importPublicSignKey, base64ToUint8 } from '@/crypto/keys'
+import { importKeyPair, base64ToUint8 } from '@/crypto/keys'
 import { WebRTCPeer } from '@/p2p/webrtc'
 import { parseHandshakeQR, parseConnectionString } from '@/p2p/qr'
 import { savePeer } from '@/storage/indexeddb'
@@ -48,7 +48,7 @@ export default function ScanQR({ identity }: ScanQRProps) {
     setConnecting(true)
     try {
       // Import our keys
-      const ourKeys = await importKeyPair(identity.keys)
+      await importKeyPair(identity.keys)
 
       // Import peer's public keys
       const peerEncKey = base64ToUint8(handshakeData.encKey)

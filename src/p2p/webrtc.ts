@@ -64,7 +64,7 @@ export class WebRTCPeer {
   /**
    * Create answer (receiver side)
    */
-  async createAnswer(offer: { sdp: string; type: string }): Promise<{ sdp: string; type: 'answer' }> {
+  async createAnswer(offer: { sdp: string; type: RTCSdpType }): Promise<{ sdp: string; type: 'answer' }> {
     await this.pc.setRemoteDescription(new RTCSessionDescription(offer))
 
     // Setup data channel when received
@@ -85,7 +85,7 @@ export class WebRTCPeer {
   /**
    * Set remote answer (initiator side)
    */
-  async setAnswer(answer: { sdp: string; type: string }): Promise<void> {
+  async setAnswer(answer: { sdp: string; type: RTCSdpType }): Promise<void> {
     await this.pc.setRemoteDescription(new RTCSessionDescription(answer))
 
     // Add any pending ICE candidates
